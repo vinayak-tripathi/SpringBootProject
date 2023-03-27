@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="JS/main.js"></script>
+    <script src="JS/profile.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home-Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+</head>
+
+<body onload="isLogin()">
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark pl-5">
+            <a class="navbar-brand" href="#">Inventory Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="isLogin" href="isgnin.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="addproduct.html">AddProduct</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col">
+                <h1>Products</h1>
+            </div>
+            <div class="col-3">
+                <a href="http://localhost:8080/api/products/export-to-excel" class="btn btn-info btn-sm" download>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-download" viewBox="0 0 16 16">
+                        <path
+                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                        <path
+                            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                    </svg>
+                    Download Product List
+                </a>
+            </div>
+
+
+        </div>
+
+
+        <div id="employees" class="row w-1">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status" id="loading">
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title">
+                            <div class="spinner-border" role="status"></div>
+                        </h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <h6 id="category">
+                            <div class="spinner-border" role="status"></div>
+                        </h6>
+                        <hr>
+                        <div class="container-fluid">
+                            <div class="row justify-content-between">
+                                <div class="col-md-4" id="price">Price:<div class="spinner-border" role="status"></div>
+                                </div>
+                                <div class="col-md-4" id="rating">Rating:<div class="spinner-border" role="status">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class='row'>
+                                <p id="quantity"></p>
+                                <div class="spinner-border" role="status"></div>
+                                <p id="desc">vt</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Edit Modal -->
+        <div class="modal fade" tabindex="-1" id="editModal" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="titleE">
+                            <div class="spinner-border" role="status" id='spinnerE'></div>
+                        </h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="container">
+                        <form id='editproduct' class="m-3">
+                            <input type="hidden" id='productId' value="">
+                            <div class="form-group mt-2">
+                                <label for="productNameE">Product Name</label>
+                                <input type="text" class="form-control" id="productNameE"
+                                    aria-describedby="Product Name" placeholder="Product Name" required>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="priceE">Price</label>
+                                <input type="number" step=0.01 class="form-control" id="priceE" placeholder="Price"
+                                    required>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="categoryE">Example select</label>
+                                <select class="custom-select mr-sm-2" id="categoryE" required>
+                                    <option value="">Choose...</option>
+                                    <option>Accessories</option>
+                                    <option>Clothing</option>
+                                    <option>Fitness</option>
+                                    <option>Electronics</option>
+                                </select>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="rating">Rating</label>
+                                <input type="number" step=0.1 min=0 max=5 class="form-control" id="ratingE"
+                                    placeholder="Rating" required>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="quantity">Quantity</label>
+                                <input type="number" class="form-control" id="quantityE" placeholder="Quantity"
+                                    required>
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="desc">Product Description</label>
+                                <textarea class="form-control" id="descE" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2"
+                                id="'editProductModalButton">Submit</button>
+                        </form>
+                    </div>
+                    <script>
+                        async function editProduct() {
+                            event.preventDefault();
+                            var myHeaders = new Headers();
+                            myHeaders.append("Accept", "application/json");
+                            myHeaders.append("Content-Type", "application/json");
+                            myHeaders.append("Authorization", `Bearer ${localStorage.getItem('jwt')}`);
+                            const prodId = document.getElementById('productId').value
+                            var raw = JSON.stringify({
+                                name: document.getElementById('productNameE').value,
+                                price: document.getElementById('priceE').value,
+                                category: document.getElementById('categoryE').value,
+                                rating: document.getElementById('ratingE').value,
+                                quantity: document.getElementById('quantityE').value,
+                                description: document.getElementById('descE').value
+                            })
+                            console.log(raw)
+
+                            var requestOptions = {
+                                method: 'PUT',
+                                headers: myHeaders,
+                                body: raw,
+                                redirect: 'follow'
+                            };
+                            var result = confirm("Want to update?");
+                            if (result) {
+
+                                response = await fetch(`http://localhost:8080/api/products/${prodId}`, requestOptions)
+                                if (response.ok) {
+                                    let data = await response.text();
+                                    // alert(data);
+                                    location.reload();
+                                    return;
+                                }
+                                else {
+                                    console.log(response.status)
+                                }
+
+                            }
+                            alert('Action Cancelled');
+
+                        }
+                        document.getElementById('editproduct').addEventListener('submit', editProduct);
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
